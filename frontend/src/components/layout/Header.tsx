@@ -21,7 +21,10 @@ export default function Header({ transparent = false }: HeaderProps) {
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 50);
         window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
     }, []);
 
     const handleSearch = (e: React.FormEvent) => {
@@ -84,6 +87,8 @@ export default function Header({ transparent = false }: HeaderProps) {
                         >
                             <Search size={20} />
                         </button>
+
+
 
                         <Link href="/cart" className={`relative group p-2 rounded-full transition-all duration-500 hover:scale-110 ${isTransparentMode ? 'bg-white/10 hover:bg-white/20' : 'bg-stone-100 hover:bg-stone-900'}`}>
                             <ShoppingCart size={20} className={`transition-colors ${!isTransparentMode ? 'group-hover:text-white' : ''}`} />

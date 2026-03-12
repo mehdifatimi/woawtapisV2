@@ -21,7 +21,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { productService, getImageUrl } from '@/services/api';
 import { useCart } from '@/context/CartContext';
-import { ShoppingBag, ChevronRight, ChevronLeft, Heart, Share2, Ruler, ShieldCheck, Truck, Star, X } from 'lucide-react';
+import { ShoppingBag, ChevronRight, ChevronLeft, Share2, Ruler, ShieldCheck, Truck, Star, X } from 'lucide-react';
 import Link from 'next/link';
 import SurMesureModal from '@/components/product/SurMesureModal';
 
@@ -32,7 +32,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     const [loading, setLoading] = useState(true);
     const [activeImage, setActiveImage] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isFavorite, setIsFavorite] = useState(false);
+
 
     useEffect(() => {
         async function loadData() {
@@ -40,11 +40,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 const data = await productService.getBySlug(slug);
                 setProduct(data);
                 
-                // Read favorites from localStorage
-                if (data && data.id) {
-                    const savedFavorites = JSON.parse(localStorage.getItem('waootapis_favorites') || '[]');
-                    setIsFavorite(savedFavorites.includes(data.id));
-                }
+
             } catch (error) {
                 console.error("Failed to load product:", error);
             } finally {
@@ -62,28 +58,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
         }
     };
 
-    const handleFavorite = () => {
-        if (!product) return;
 
-        const newStatus = !isFavorite;
-        setIsFavorite(newStatus);
-        
-        const savedFavorites = JSON.parse(localStorage.getItem('waootapis_favorites') || '[]');
-        if (newStatus) {
-            if (!savedFavorites.includes(product.id)) {
-                savedFavorites.push(product.id);
-            }
-        } else {
-            const index = savedFavorites.indexOf(product.id);
-            if (index > -1) {
-                savedFavorites.splice(index, 1);
-            }
-        }
-        localStorage.setItem('waootapis_favorites', JSON.stringify(savedFavorites));
-        
-        // Dispatch an event so other components (e.g. Header) can update if needed
-        window.dispatchEvent(new Event('favoritesUpdated'));
-    };
 
     const handleShare = async () => {
         if (navigator.share) {
@@ -203,12 +178,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                                     </p>
                                 </div>
                                 <div className="flex gap-4">
-                                    <button 
-                                        onClick={handleFavorite}
-                                        className={`p-3 bg-white border border-stone-100 rounded-full transition-all duration-500 shadow-sm ${isFavorite ? 'text-primary border-primary bg-primary/5' : 'hover:text-primary'}`}
-                                    >
-                                        <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
-                                    </button>
+
                                     <button 
                                         onClick={handleShare}
                                         className="p-3 bg-white border border-stone-100 rounded-full hover:text-primary transition-all duration-500 shadow-sm"
