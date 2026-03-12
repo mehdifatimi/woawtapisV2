@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Eye, Share2 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { getImageUrl } from '@/services/api';
 import SurMesureModal from './SurMesureModal';
@@ -27,6 +27,30 @@ export default function ProductCard({ product }: ProductCardProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const primaryImage = getImageUrl(product.images?.[0]?.image_path);
     const hasSale = !!product.sale_price;
+
+    const handleShare = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const url = `${window.location.origin}/product/${product.slug}`;
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: product.name,
+                    text: product.name,
+                    url: url,
+                });
+            } catch (err) {
+                console.log('Error sharing:', err);
+            }
+        } else {
+            try {
+                await navigator.clipboard.writeText(url);
+                alert('Lien copié dans le presse-papier !');
+            } catch (err) {
+                console.error('Failed to copy:', err);
+            }
+        }
+    };
 
     return (
         <div className="group relative bg-white border border-stone-100 overflow-hidden transition-all duration-1000 hover:shadow-2xl hover:shadow-stone-200/50">
@@ -53,22 +77,40 @@ export default function ProductCard({ product }: ProductCardProps) {
                     </span>
                 )}
 
-                {/* Quick Add Overlay */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-700 translate-y-4 group-hover:translate-y-0">
-                    <button
-                        onClick={(e) => {
-                            e.preventDefault();
-                            if (product.type?.name === 'sur_mesure') {
-                                setIsModalOpen(true);
-                            } else {
-                                addToCart(product);
-                            }
-                        }}
-                        className="btn-premium flex items-center gap-2 group/btn"
-                    >
-                        <ShoppingCart size={14} className="transition-transform duration-500 group-hover/btn:-translate-y-1" />
-                        <span>{product.type?.name === 'sur_mesure' ? 'Personnaliser' : 'Ajouter au Panier'}</span>
-                    </button>
+                {/* Action Buttons Overlay */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-700 translate-y-4 group-hover:translate-y-0 z-20">
+                    <div className="flex items-center gap-3">
+                        <div 
+                            className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-stone-900 hover:bg-primary hover:text-white transition-colors shadow-2xl cursor-pointer"
+                            title="Voir les détails"
+                        >
+                            <Eye size={18} />
+                        </div>
+                        
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                if (product.type?.name === 'sur_mesure') {
+                                    setIsModalOpen(true);
+                                } else {
+                                    addToCart(product);
+                                }
+                            }}
+                            className="h-10 px-4 sm:px-6 bg-stone-900 text-white text-[10px] uppercase tracking-[0.2em] font-bold hover:bg-primary transition-colors flex items-center gap-2 shadow-2xl rounded-full focus:outline-none"
+                        >
+                            <ShoppingCart size={14} />
+                            <span className="hidden sm:inline">{product.type?.name === 'sur_mesure' ? 'Personnaliser' : 'Ajouter'}</span>
+                        </button>
+                        
+                        <button
+                            onClick={handleShare}
+                            className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-stone-900 hover:bg-primary hover:text-white transition-colors shadow-2xl focus:outline-none"
+                            title="Partager"
+                        >
+                            <Share2 size={18} />
+                        </button>
+                    </div>
                 </div>
             </Link>
 
