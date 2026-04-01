@@ -68,9 +68,7 @@ class ProductController extends Controller
         return Product::with([
             'category',
             'type',
-            'images' => function ($q) {
-                $q->where('is_primary', true);
-            }
+            'images'
         ])
             ->where('featured', true)
             ->where('status', 'active')
@@ -83,9 +81,7 @@ class ProductController extends Controller
         return Product::with([
             'category',
             'type',
-            'images' => function ($q) {
-                $q->where('is_primary', true);
-            }
+            'images'
         ])
             ->where('best_seller', true)
             ->where('status', 'active')
