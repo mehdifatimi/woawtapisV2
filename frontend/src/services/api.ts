@@ -1,5 +1,5 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
 
 export function getImageUrl(path?: string) {
   if (!path) return '/images/placeholder.jpg';
