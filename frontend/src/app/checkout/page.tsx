@@ -97,47 +97,55 @@ export default function CheckoutPage() {
                              <div className="flex justify-between items-center border-b pb-8">
                                 <h1 className="text-4xl font-playfair font-bold italic">WOW TAPIS</h1>
                                 <div className="text-right space-y-1">
-                                    <p className="text-[10px] font-black uppercase tracking-widest">Reçu de Commande</p>
-                                    <p className="text-sm font-bold">#{orderSuccess?.order_number || orderSuccess}</p>
+                                    <p className="text-[10px] font-black uppercase tracking-widest">Reçu de Commande Officiel</p>
+                                    <p className="text-sm font-bold">#{orderSuccess?.order_number || (typeof orderSuccess === 'string' ? orderSuccess : 'En attente')}</p>
                                 </div>
                              </div>
-                             <div className="grid grid-cols-2 gap-12">
+                             <div className="grid grid-cols-2 gap-12 text-sm">
                                 <div className="space-y-4">
                                     <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Détails Client</p>
-                                    <p className="text-sm font-bold">{formData.customer_name}<br/>{formData.customer_phone}<br/>{formData.customer_email}</p>
+                                    <p className="font-bold">{formData.customer_name}<br/>{formData.customer_phone}<br/>{formData.customer_email}</p>
                                 </div>
                                 <div className="space-y-4 text-right">
                                     <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Adresse de Livraison</p>
-                                    <p className="text-sm font-bold">{formData.customer_city}<br/>{formData.customer_address}</p>
+                                    <p className="font-bold">{formData.customer_city}<br/>{formData.customer_address}</p>
                                 </div>
                              </div>
-                             <table className="w-full text-sm border-t border-b border-stone-100 py-4 mt-8">
+                             <table className="w-full text-sm border-t border-b border-stone-100 mt-8">
                                 <thead>
-                                    <tr className="text-[10px] font-black uppercase tracking-widest text-stone-400">
+                                    <tr className="text-[10px] font-black uppercase tracking-widest text-stone-400 border-b border-stone-50">
                                         <th className="py-4 text-left">Article</th>
-                                        <th className="py-4 text-center">Qté</th>
+                                        <th className="py-4 text-center">Quantité</th>
                                         <th className="py-4 text-right">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {cart.map((item, i) => (
-                                        <tr key={i} className="border-t border-stone-50">
-                                            <td className="py-4 font-bold">{item.name}</td>
-                                            <td className="py-4 text-center">{item.quantity}</td>
-                                            <td className="py-4 text-right font-bold">{(item.price * item.quantity).toLocaleString()} MAD</td>
+                                    {(orderSuccess?.items || []).map((item: any, i: number) => (
+                                        <tr key={i} className="border-b border-stone-50/50">
+                                            <td className="py-4 flex items-center gap-4">
+                                                <div className="w-10 h-14 bg-stone-50 rounded overflow-hidden">
+                                                    {item.product?.primary_image?.image_path && (
+                                                        <img src={getImageUrl(item.product.primary_image.image_path)} className="w-full h-full object-cover" />
+                                                    )}
+                                                </div>
+                                                <span className="font-bold">{item.product_name || item.product?.name}</span>
+                                            </td>
+                                            <td className="py-4 text-center font-bold">{item.quantity}</td>
+                                            <td className="py-4 text-right font-bold">{parseFloat(item.subtotal || (item.price * item.quantity)).toLocaleString()} MAD</td>
                                         </tr>
                                     ))}
                                 </tbody>
                              </table>
                              <div className="flex justify-end pt-8">
-                                <div className="text-right space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Total payé (TTC)</p>
-                                    <p className="text-4xl font-playfair font-black">{totalPrice.toLocaleString()} MAD</p>
-                                    <p className="text-[9px] italic text-stone-400">Paiement à la livraison</p>
+                                <div className="text-right space-y-2 p-6 bg-stone-50 rounded-2xl">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Montant Total Payé (TTC)</p>
+                                    <p className="text-4xl font-playfair font-black">{parseFloat(orderSuccess?.total_amount || 0).toLocaleString()} MAD</p>
+                                    <p className="text-[9px] italic text-stone-1000 bg-stone-900 text-white px-2 py-1 inline-block mt-2 rounded">Paiement à la livraison</p>
                                 </div>
                              </div>
-                             <div className="pt-20 text-center border-t border-stone-50 text-[10px] text-stone-400 uppercase tracking-widest">
-                                Merci de soutenir l&apos;artisanat Marocain. contact@waootapis.com
+                             <div className="pt-20 text-center border-t border-stone-50 text-[10px] text-stone-400 uppercase tracking-widest leading-loose">
+                                WOW TAPIS - Maison d&apos;Artisanat de Luxe<br/>
+                                Merci de votre confiance. Contact: contact@waootapis.com
                              </div>
                         </div>
                     </div>
