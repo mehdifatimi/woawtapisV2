@@ -73,17 +73,72 @@ export default function CheckoutPage() {
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-12">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-12 no-print">
+                            <button 
+                                onClick={() => window.print()}
+                                className="flex items-center justify-center gap-3 bg-stone-100 text-stone-900 px-6 py-5 rounded-2xl font-bold hover:bg-stone-200 transition-all border border-stone-200"
+                            >
+                                <span className="text-[10px] uppercase tracking-widest">Télécharger Reçu</span>
+                            </button>
                             <Link 
                                 href={`/track-order?order=${orderSuccess?.order_number || (typeof orderSuccess === 'string' ? orderSuccess : '')}`} 
-                                className="flex items-center justify-center gap-3 bg-stone-900 text-white px-10 py-5 rounded-2xl font-bold hover:bg-stone-800 transition-all shadow-xl shadow-stone-900/10 group"
+                                className="flex items-center justify-center gap-3 bg-stone-900 text-white px-6 py-5 rounded-2xl font-bold hover:bg-stone-800 transition-all shadow-xl shadow-stone-900/10 group"
                             >
-                                <span className="text-[10px] uppercase tracking-widest">Suivre ma Commande</span>
+                                <span className="text-[10px] uppercase tracking-widest">Suivre Commande</span>
                                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                             </Link>
-                            <Link href="/products" className="flex items-center justify-center gap-3 bg-stone-50 text-stone-600 px-10 py-5 rounded-2xl font-bold hover:bg-stone-100 transition-all">
-                                <span className="text-[10px] uppercase tracking-widest">Continuer mes Achats</span>
+                            <Link href="/products" className="flex items-center justify-center gap-3 bg-stone-50 text-stone-600 px-6 py-5 rounded-2xl font-bold hover:bg-stone-100 transition-all">
+                                <span className="text-[10px] uppercase tracking-widest">Continuer Achats</span>
                             </Link>
+                        </div>
+
+                        {/* Hidden Print-only Template */}
+                        <div className="hidden print:block text-left p-10 space-y-8 bg-white text-stone-900">
+                             <div className="flex justify-between items-center border-b pb-8">
+                                <h1 className="text-4xl font-playfair font-bold italic">WOW TAPIS</h1>
+                                <div className="text-right space-y-1">
+                                    <p className="text-[10px] font-black uppercase tracking-widest">Reçu de Commande</p>
+                                    <p className="text-sm font-bold">#{orderSuccess?.order_number || orderSuccess}</p>
+                                </div>
+                             </div>
+                             <div className="grid grid-cols-2 gap-12">
+                                <div className="space-y-4">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Détails Client</p>
+                                    <p className="text-sm font-bold">{formData.customer_name}<br/>{formData.customer_phone}<br/>{formData.customer_email}</p>
+                                </div>
+                                <div className="space-y-4 text-right">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Adresse de Livraison</p>
+                                    <p className="text-sm font-bold">{formData.customer_city}<br/>{formData.customer_address}</p>
+                                </div>
+                             </div>
+                             <table className="w-full text-sm border-t border-b border-stone-100 py-4 mt-8">
+                                <thead>
+                                    <tr className="text-[10px] font-black uppercase tracking-widest text-stone-400">
+                                        <th className="py-4 text-left">Article</th>
+                                        <th className="py-4 text-center">Qté</th>
+                                        <th className="py-4 text-right">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {cart.map((item, i) => (
+                                        <tr key={i} className="border-t border-stone-50">
+                                            <td className="py-4 font-bold">{item.name}</td>
+                                            <td className="py-4 text-center">{item.quantity}</td>
+                                            <td className="py-4 text-right font-bold">{(item.price * item.quantity).toLocaleString()} MAD</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                             </table>
+                             <div className="flex justify-end pt-8">
+                                <div className="text-right space-y-2">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-stone-400">Total payé (TTC)</p>
+                                    <p className="text-4xl font-playfair font-black">{totalPrice.toLocaleString()} MAD</p>
+                                    <p className="text-[9px] italic text-stone-400">Paiement à la livraison</p>
+                                </div>
+                             </div>
+                             <div className="pt-20 text-center border-t border-stone-50 text-[10px] text-stone-400 uppercase tracking-widest">
+                                Merci de soutenir l&apos;artisanat Marocain. contact@waootapis.com
+                             </div>
                         </div>
                     </div>
                 </main>
