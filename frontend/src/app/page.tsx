@@ -40,9 +40,9 @@ export default function Home() {
       desc: "Art ancestral berbère tissé à la main dans les montagnes du Moyen Atlas. Chaque pièce raconte l'histoire d'une tradition vivante.",
       img: "/images/collection_marocain.png",
       options: [
-        { label: "En Stock", desc: "Des pièces prêtes à être expédiées, directement issues des ateliers berbères.", catId: "5", type: "stock" },
-        { label: "Sur Mesure", desc: "Créez votre tapis marocain aux dimensions et couleurs de votre choix.", catId: "8", type: "mesure" },
-        { label: "Vintage", desc: "Pièces d'exception aux patines du temps, rares et recherchées par les connaisseurs.", catId: "19", type: "vintage" }
+        { label: "En Stock", desc: "Des pièces prêtes à être expédiées, directement issues des ateliers berbères.", catId: "marocain-on-stock", type: "stock" },
+        { label: "Sur Mesure", desc: "Créez votre tapis marocain aux dimensions et couleurs de votre choix.", catId: "marocain-sur-mesure", type: "mesure" },
+        { label: "Vintage", desc: "Pièces d'exception aux patines du temps, rares et recherchées par les connaisseurs.", catId: "marocain-vintage", type: "vintage" }
       ]
     },
     {
@@ -51,8 +51,8 @@ export default function Home() {
       desc: "Design contemporain épuré fusionnant savoir-faire artisanal et esthétique actuelle. Pour les intérieurs qui osent.",
       img: "/images/collection_moderne.png",
       options: [
-        { label: "En Stock", desc: "Des créations contemporaines prêtes à transformer votre espace immédiatement.", catId: "1", type: "stock" },
-        { label: "Sur Mesure", desc: "Personnalisez chaque détail — taille, couleur, motif — pour une pièce unique.", catId: "11", type: "mesure" }
+        { label: "En Stock", desc: "Des créations contemporaines prêtes à transformer votre espace immédiatement.", catId: "moderne-on-stock", type: "stock" },
+        { label: "Sur Mesure", desc: "Personnalisez chaque détail — taille, couleur, motif — pour une pièce unique.", catId: "moderne-sur-mesure", type: "mesure" }
       ]
     },
     {
@@ -61,8 +61,8 @@ export default function Home() {
       desc: "La quintessence de l'art persan. Médaillons floraux, jeux de couleurs profondes et finesse d'un tissage millénaire.",
       img: "/images/collection_iran.png",
       options: [
-        { label: "En Stock", desc: "Authentiques tapis persans disponibles immédiatement pour livraison.", catId: "2", type: "stock" },
-        { label: "Vintage", desc: "Tapis anciens persans d'époque, chargés d'histoire et de rareté absolue.", catId: "18", type: "vintage" }
+        { label: "En Stock", desc: "Authentiques tapis persans disponibles immédiatement pour livraison.", catId: "l-iran-on-stock", type: "stock" },
+        { label: "Vintage", desc: "Tapis anciens persans d'époque, chargés d'histoire et de rareté absolue.", catId: "liran-vintage", type: "vintage" }
       ]
     },
     {
@@ -71,8 +71,8 @@ export default function Home() {
       desc: "L'héritage ottoman revisité. Motifs de tulipes et arabesques tissés avec des laines nobles aux teintes profondes.",
       img: "/images/collection_turc.png",
       options: [
-        { label: "En Stock", desc: "Authentiques tapis turcs disponibles pour une livraison rapide.", catId: "4", type: "stock" },
-        { label: "Vintage", desc: "Pièces ottomanes anciennes d'une rareté et d'une authenticité incomparables.", catId: "17", type: "vintage" }
+        { label: "En Stock", desc: "Authentiques tapis turcs disponibles pour une livraison rapide.", catId: "turc-on-stock", type: "stock" },
+        { label: "Vintage", desc: "Pièces ottomanes anciennes d'une rareté et d'une authenticité incomparables.", catId: "turc-vintage", type: "vintage" }
       ]
     }
   ];

@@ -14,7 +14,16 @@ class ProductController extends Controller
         $query = Product::with(['category', 'images', 'type']);
 
         if ($request->filled('category')) {
-            $query->where('category_id', $request->category);
+            $cat = $request->category;
+            $query->where(function ($q) use ($cat) {
+                if (is_numeric($cat)) {
+                    $q->where('category_id', $cat);
+                } else {
+                    $q->whereHas('category', function ($q2) use ($cat) {
+                        $q2->where('slug', $cat);
+                    });
+                }
+            });
         }
 
         if ($request->filled('type')) {

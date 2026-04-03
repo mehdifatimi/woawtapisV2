@@ -65,7 +65,7 @@ function ProductsContent() {
     const currentPage = parseInt(searchParams.get('page') || '1');
 
     // Finding active category name to check for "Moderne"
-    const activeCategory = categories.find(c => String(c.id) === catParam);
+    const activeCategory = categories.find(c => String(c.id) === catParam || c.slug === catParam);
     const isModerneActive = activeCategory?.name?.toLowerCase().includes('moderne');
 
     const scroll = (direction: 'left' | 'right') => {
@@ -204,9 +204,9 @@ function ProductsContent() {
                         {categories.map((cat: any) => (
                             <Link
                                 key={cat.id}
-                                href={`/products?category=${cat.id}${type ? `&type=${type}` : ''}`}
+                                href={`/products?category=${cat.slug || cat.id}${type ? `&type=${type}` : ''}`}
                                 className={`whitespace-nowrap px-8 py-3 text-[10px] uppercase tracking-[0.25em] font-black transition-all duration-500 rounded-full border ${
-                                    catParam === String(cat.id) ? 'bg-stone-900 text-white border-stone-900 shadow-xl scale-105' : 'bg-stone-50 text-stone-400 border-transparent hover:border-stone-900 hover:text-stone-900 hover:bg-white'
+                                    (catParam === String(cat.id) || catParam === cat.slug) ? 'bg-stone-900 text-white border-stone-900 shadow-xl scale-105' : 'bg-stone-50 text-stone-400 border-transparent hover:border-stone-900 hover:text-stone-900 hover:bg-white'
                                 }`}
                             >
                                 {cat.name.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}
