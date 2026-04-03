@@ -3,12 +3,12 @@ name: Deploy to VPS
 on:
   push:
     branches:
-      - main # Change this to your main branch (e.g., master) if different
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -19,34 +19,55 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_PRIVATE_KEY }}
-          port: ${{ secrets.VPS_PORT }} # Typically 22
+          port: ${{ secrets.VPS_PORT }}
           script: |
-            # Navigate to the project directory (Change this path if your folder is named differently on Hostinger)
-            cd /var/www/woawTapis || cd ~/woawtapisV2 || cd ~/public_html/woawTapis
-            
-            # Pull the latest changes from the repository
+            # ---------------------------------------------------
+            # Find the project directory
+            # ---------------------------------------------------
+            PROJECT_DIR=""
+            for dir in \
+              "$HOME/woawtapisV2" \
+              "$HOME/woawTapis" \
+              "/var/www/woawTapis" \
+              "/var/www/woawtapisV2" \
+              "$HOME/public_html/woawTapis"; do
+              if [ -d "$dir/.git" ]; then
+                PROJECT_DIR="$dir"
+                break
+              fi
+            done
+
+            if [ -z "$PROJECT_DIR" ]; then
+              echo "ERROR: Could not find project directory!"
+              exit 1
+            fi
+
+            echo "Found project at: $PROJECT_DIR"
+            cd "$PROJECT_DIR"
+
+            # ---------------------------------------------------
+            # Pull latest changes
+            # ---------------------------------------------------
             git pull origin main
-            
+
             # ---------------------------------------------------
-            # BACKEND DEPLOYMENT (Laravel)
+            # BACKEND DEPLOYMENT (NestJS)
             # ---------------------------------------------------
-            echo "Deploying Backend..."
-            cd backend
-            composer install --no-dev --optimize-autoloader --no-interaction
-            php artisan migrate --force
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
-            cd ..
-            
+            echo "Deploying Backend (NestJS)..."
+            cd "$PROJECT_DIR/backend"
+            npm install --legacy-peer-deps
+            npm run build
+            pm2 restart wowtapis-back || pm2 start dist/main.js --name wowtapis-back
+            cd "$PROJECT_DIR"
+
             # ---------------------------------------------------
             # FRONTEND DEPLOYMENT (Next.js)
             # ---------------------------------------------------
-            echo "Deploying Frontend..."
-            cd frontend
-            npm install
+            echo "Deploying Frontend (Next.js)..."
+            cd "$PROJECT_DIR/frontend"
+            npm install --legacy-peer-deps
             npm run build
-            # Restart the PM2 process (assuming it's named 'frontend')
-            pm2 restart frontend || pm2 restart all
-            
+            pm2 restart wowtapis-front || pm2 start npm --name wowtapis-front -- start
+
             echo "Deployment successful!"
+            pm2 list
