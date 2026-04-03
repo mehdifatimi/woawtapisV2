@@ -51,13 +51,15 @@ jobs:
             git pull origin main
 
             # ---------------------------------------------------
-            # BACKEND DEPLOYMENT (NestJS)
+            # BACKEND DEPLOYMENT (Laravel)
             # ---------------------------------------------------
-            echo "Deploying Backend (NestJS)..."
+            echo "Deploying Backend (Laravel)..."
             cd "$PROJECT_DIR/backend"
-            npm install --legacy-peer-deps
-            npm run build
-            pm2 restart wowtapis-back || pm2 start dist/main.js --name wowtapis-back
+            composer install --no-dev --optimize-autoloader --no-interaction
+            php artisan migrate --force
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
             cd "$PROJECT_DIR"
 
             # ---------------------------------------------------
