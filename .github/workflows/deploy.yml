@@ -7,12 +7,9 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to Hostinger VPS
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -22,72 +19,25 @@ jobs:
           key: ${{ secrets.VPS_PRIVATE_KEY }}
           port: ${{ secrets.VPS_PORT }}
           script: |
-            set -e # Exit immediately if a command exits with a non-zero status
-
-            # ---------------------------------------------------
-            # Configuration
-            # ---------------------------------------------------
-            # IMPORTANT: Ensure this path matches your VPS setup
-            PROJECT_ROOT="/var/www/woawTapis"
+            set -e
             
-            echo "--- Starting Deployment ---"
-
-            # Check if directory exists
-            if [ ! -d "$PROJECT_ROOT" ]; then
-              echo "Error: Directory $PROJECT_ROOT not found."
-              echo "Checking common locations..."
-              if [ -d "$HOME/woawTapis" ]; then
-                PROJECT_ROOT="$HOME/woawTapis"
-                echo "Found project at $PROJECT_ROOT"
-              else
-                echo "Please verify the project path on your server."
-                exit 1
-              fi
-            fi
-
-            cd "$PROJECT_ROOT"
-
-            # ---------------------------------------------------
-            # Pull latest changes
-            # ---------------------------------------------------
-            echo "--- Pulling latest changes from Git ---"
-            # Reset local changes if any to prevent merge conflicts
-            git reset --hard origin/main
+            # Go to project directory (Trying most likely names)
+            cd /var/www/woawTapis
+            
+            # Update code
             git pull origin main
 
-            # ---------------------------------------------------
-            # BACKEND DEPLOYMENT (Laravel)
-            # ---------------------------------------------------
-            echo "--- Deploying Backend (Laravel) ---"
-            cd "$PROJECT_ROOT/backend"
-            
-            # Allow Composer to run as root/superuser (common on VPS)
+            # Backend Deployment
+            cd backend
             export COMPOSER_ALLOW_SUPERUSER=1
-            
-            composer install --no-dev --optimize-autoloader --no-interaction
-            
-            # Run migrations and cache optimizations
+            composer install --no-dev --no-interaction
             php artisan migrate --force
             php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
-            
-            # ---------------------------------------------------
-            # FRONTEND DEPLOYMENT (Next.js)
-            # ---------------------------------------------------
-            echo "--- Deploying Frontend (Next.js) ---"
-            cd "$PROJECT_ROOT/frontend"
-            
-            # Install dependencies and build
+
+            # Frontend Deployment
+            cd ../frontend
             npm install --legacy-peer-deps
             npm run build
-            
-            # Restart or Start the application with PM2
-            echo "--- Restarting PM2 Process ---"
             pm2 restart wowtapis-front || pm2 start npm --name wowtapis-front -- start
-
-            # ---------------------------------------------------
-            # Final Status
-            # ---------------------------------------------------
-            echo "--- Deployment Complete! ---"
-            pm2 list
+            
+            echo "Deployment successful!"
