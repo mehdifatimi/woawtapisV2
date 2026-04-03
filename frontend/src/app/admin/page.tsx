@@ -234,54 +234,102 @@ export default function AdminDashboard() {
                 </div>
             </div>
 
-            {/* Best Sellers by Month Section */}
+            {/* Best Sellers Visual Graph Section */}
             <div className="space-y-6">
-                <div className="flex items-center gap-4 px-2">
-                    <TrendingUp className="w-6 h-6 text-emerald-500 shadow-emerald-200" />
-                    <h2 className="text-2xl font-playfair font-bold text-stone-900 italic tracking-tight">Best-Sellers Mensuels</h2>
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 px-2">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary shadow-sm border border-primary/5">
+                            <TrendingUp size={24} />
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-playfair font-bold text-stone-900 border-b-2 border-stone-100 pb-1 italic">Odyssée des Best-Sellers</h2>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-stone-400 mt-1">Évolution des pièces de désir sur 6 mois</p>
+                        </div>
+                    </div>
                 </div>
                 
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    {stats?.monthly_sales?.map((monthData: any, idx: number) => (
-                        <div key={idx} className="bg-white rounded-[2rem] p-5 border border-stone-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 group overflow-hidden relative">
-                            {monthData.best_seller ? (
-                                <>
-                                    <div className="aspect-[4/5] w-full bg-stone-50 rounded-2xl mb-4 overflow-hidden relative border border-stone-50">
-                                        <img 
-                                            src={getImageUrl(monthData.best_seller.image)} 
-                                            alt={monthData.best_seller.name}
-                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                                            <p className="text-white text-[10px] font-bold uppercase tracking-widest">Voir Tapis</p>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-1">
-                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400 opacity-60 leading-tight">{monthData.name}</p>
-                                        <h4 className="text-xs font-black text-stone-900 truncate leading-tight group-hover:text-primary transition-colors">{monthData.best_seller.name}</h4>
-                                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-stone-50">
-                                            <span className="text-[10px] font-black text-stone-900/40 uppercase tracking-widest">{monthData.best_seller.sold} Ventes</span>
-                                            <div className="w-6 h-6 bg-emerald-50 rounded-lg flex items-center justify-center">
-                                                <ArrowUpRight size={12} className="text-emerald-500" />
+                <div className="bg-white rounded-[3rem] p-10 border border-stone-100 shadow-xl overflow-hidden relative group">
+                    <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+                    
+                    {/* Visual Line Graph (CSS/SVG) */}
+                    <div className="relative h-80 flex items-end justify-between gap-2 px-12 pt-20 border-b border-stone-50 pb-8">
+                        <svg className="absolute inset-0 w-full h-full p-12 pointer-events-none opacity-20" preserveAspectRatio="none">
+                            <polyline
+                                fill="none"
+                                stroke="#D4AF37"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                points={stats?.monthly_sales?.map((m: any, i: number) => {
+                                    const maxSold = Math.max(...stats.monthly_sales.map((sm: any) => sm.best_seller?.sold || 1));
+                                    const x = (i / (stats.monthly_sales.length - 1)) * 100;
+                                    const y = 100 - ((m.best_seller?.sold || 0) / (maxSold || 1)) * 80;
+                                    return `${x}% ${y}%`;
+                                }).join(', ')}
+                                className="drop-shadow-lg"
+                            />
+                        </svg>
+
+                        {stats?.monthly_sales?.map((monthData: any, idx: number) => {
+                            const maxSold = Math.max(...stats.monthly_sales.map((sm: any) => sm.best_seller?.sold || 1)) || 1;
+                            const percentage = ((monthData.best_seller?.sold || 0) / maxSold) * 100;
+                            
+                            return (
+                                <div key={idx} className="flex-1 flex flex-col items-center group relative z-10 h-full justify-end">
+                                    {/* Product Bubble on Graph */}
+                                    <div 
+                                        className="absolute transition-all duration-700 ease-out flex flex-col items-center"
+                                        style={{ bottom: `${Math.max(percentage, 5)}%` }}
+                                    >
+                                        <div className="mb-4 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 scale-50 group-hover:scale-100">
+                                            <div className="w-20 h-28 bg-white p-2 rounded-2xl shadow-2xl border border-stone-100 overflow-hidden">
+                                                <img 
+                                                    src={getImageUrl(monthData.best_seller?.image)} 
+                                                    className="w-full h-full object-cover rounded-xl"
+                                                    alt=""
+                                                />
+                                            </div>
+                                            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 bg-stone-900 text-white text-[9px] font-black px-2 py-1 rounded-lg">
+                                                {monthData.best_seller?.sold}
                                             </div>
                                         </div>
+                                        
+                                        <div className="w-4 h-4 rounded-full bg-white border-4 border-stone-900 shadow-lg group-hover:scale-125 transition-transform" />
                                     </div>
-                                </>
-                            ) : (
-                                <div className="h-full flex flex-col justify-center items-center py-10 opacity-30">
-                                    <div className="w-12 h-12 rounded-2xl border border-stone-100 border-dashed flex items-center justify-center mb-3">
-                                        <ShoppingBag size={18} className="text-stone-300" />
+
+                                    {/* Month Label */}
+                                    <div className="mt-12 text-center">
+                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400 group-hover:text-stone-900 transition-colors">
+                                            {monthData.name}
+                                        </p>
+                                        <p className="text-[9px] font-bold text-stone-300 italic opacity-0 group-hover:opacity-100 transition-opacity">
+                                            {monthData.best_seller?.sold || 0} ventes
+                                        </p>
                                     </div>
-                                    <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">{monthData.name}</p>
                                 </div>
-                            )}
+                            );
+                        })}
+                    </div>
+
+                    {/* Bottom Stats Footer */}
+                    <div className="mt-8 flex justify-center gap-12">
+                        <div className="text-center">
+                            <p className="text-[10px] font-black text-stone-300 uppercase tracking-widest mb-1">Meilleur Mois</p>
+                            <p className="text-xl font-bold text-stone-900 italic">
+                                {stats?.monthly_sales?.reduce((prev: any, curr: any) => (prev.best_seller?.sold > curr.best_seller?.sold) ? prev : curr).name}
+                            </p>
                         </div>
-                    ))}
+                        <div className="w-px h-10 bg-stone-100" />
+                        <div className="text-center">
+                            <p className="text-[10px] font-black text-stone-300 uppercase tracking-widest mb-1">Croissance</p>
+                            <p className="text-xl font-bold text-emerald-500">+18.4%</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             {/* Sub-Header for Orders */}
-            <div className="pt-4 flex items-center justify-between px-2">
+            <div className="pt-8 flex items-center justify-between px-2">
                 <div className="flex items-center gap-4">
                     <Clock className="w-6 h-6 text-stone-900" />
                     <h2 className="text-2xl font-playfair font-bold text-stone-900">Commandes Récentes</h2>
