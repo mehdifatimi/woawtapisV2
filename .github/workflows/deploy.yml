@@ -32,7 +32,7 @@ jobs:
             git pull -r origin main
 
             # ---------------------------------------------------
-            # BACKEND DEPLOYMENT (Laravel)
+            # BACKEND DEPLOYMENT (NestJS)
             # ---------------------------------------------------
             echo "Deploying Backend (Laravel)..."
             cd /var/www/woawTapis/backend
