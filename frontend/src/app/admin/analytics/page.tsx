@@ -99,7 +99,7 @@ export default function AnalyticsPage() {
             // we compare with the 2nd to last element of global stats representing prior month usually
             const previousData = allSales[allSales.length - 2]?.total || 1; 
             const diff = ((currentData - previousData) / previousData) * 100;
-            return { value: Math.abs(diff).toFixed(1), isPositive: diff >= 0 };
+            return { value: Math.abs(diff), isPositive: diff >= 0 };
         }
         return { value: 0, isPositive: true };
     };
@@ -385,7 +385,7 @@ export default function AnalyticsPage() {
                                     {growth.value > 0 && (
                                         <div className={`mt-3 flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold ${growth.isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
                                             {growth.isPositive ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
-                                            {growth.isPositive ? '+' : '-'}{growth.value}% vs mois précédent
+                                            {growth.isPositive ? '+' : '-'}{growth.value.toFixed(1)}% vs mois précédent
                                         </div>
                                     )}
                                 </div>
