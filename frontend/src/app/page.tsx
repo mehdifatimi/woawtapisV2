@@ -9,7 +9,7 @@ import Image from 'next/image';
 import { productService, contactService } from '@/services/api';
 
 import { useRouter } from 'next/navigation';
-import { Truck, Wrench, Gem, Send, Loader2, CheckCircle2, ChevronRight, X, Star } from 'lucide-react';
+import { Truck, Wrench, Gem, Send, Loader2, CheckCircle2, ChevronRight, X, Star, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Home() {
@@ -383,6 +383,44 @@ export default function Home() {
                       <p className="font-bold text-stone-900 text-sm">{testi.name}</p>
                       <p className="text-xs uppercase tracking-widest text-stone-400 font-black">{testi.city}</p>
                     </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.section>
+
+        {/* Instagram UGC / Gallery Section */}
+        <motion.section 
+          initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp}
+          className="pb-24 pt-12 bg-stone-50 overflow-hidden"
+        >
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-8">
+              <div className="space-y-4">
+                <h2 className="text-primary uppercase tracking-[0.2em] text-sm font-bold">Inspiration</h2>
+                <h3 className="text-4xl md:text-5xl font-serif font-bold italic">Dans vos intérieurs</h3>
+              </div>
+              <a href="https://instagram.com/waootapis" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-[10px] uppercase tracking-widest font-black text-stone-900 border-b-2 border-stone-900 pb-1 hover:text-primary hover:border-primary transition-all">
+                @waootapis sur Instagram
+                <ArrowRight size={14} />
+              </a>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { src: "/images/hero-carpet.jpg", likes: "1.2k" },
+                { src: "/images/product-categories/moderne.webp", likes: "856" },
+                { src: "/images/product-categories/berbere.webp", likes: "2.4k" },
+                { src: "/images/product-categories/vintage.webp", likes: "942" }
+              ].map((img, i) => (
+                <div key={i} className="group relative aspect-square bg-stone-200 overflow-hidden rounded-xl shadow-sm">
+                  <img src={img.src} alt={`Instagram feed ${i}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/60 transition-colors duration-500 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100">
+                    <p className="text-white text-xs font-black uppercase tracking-widest mb-2 flex items-center gap-2">
+                      <Star size={14} fill="currentColor" /> {img.likes}
+                    </p>
+                    <span className="text-white text-[10px] italic font-serif">Voir la publication</span>
                   </div>
                 </div>
               ))}
