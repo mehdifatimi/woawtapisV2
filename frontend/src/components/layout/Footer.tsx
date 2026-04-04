@@ -1,3 +1,5 @@
+"use client";
+
 import { FaInstagram, FaPinterestP, FaFacebookF, FaTiktok } from 'react-icons/fa6';
 import React, { useState } from 'react';
 import { CheckCircle2, Loader2, Mail, MapPin, Phone, ArrowRight } from 'lucide-react';
