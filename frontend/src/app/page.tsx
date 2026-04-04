@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 import { Truck, Wrench, Gem, Send, Loader2, CheckCircle2, ChevronRight, X } from 'lucide-react';
 
 export default function Home() {
-  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Contact Form State
@@ -90,6 +90,17 @@ export default function Home() {
     setSelectedCollection(null);
   };
 
+  // Prevent background scrolling when a modal is open
+  useEffect(() => {
+    if (selectedCollection) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    // Cleanup on unmount
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [selectedCollection]);
+
 
   useEffect(() => {
     async function loadData() {
@@ -118,7 +129,7 @@ export default function Home() {
       await contactService.sendMessage(formData);
       
       // 2. Format WhatsApp Message
-      const whatsappNumber = "212607790956"; // Clean number without +
+      const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP || "212607790956"; // Use ENV variable if present
       const text = `Bonjour TAW 10,\n\nNouveau message de contact :\n\n*Nom:* ${formData.name}\n*Email:* ${formData.email}\n*Sujet:* ${formData.subject}\n*Message:* ${formData.message}`;
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
       
@@ -293,11 +304,15 @@ export default function Home() {
                   <div key={i} className="aspect-square bg-stone-100 rounded-sm" />
                 ))}
               </div>
-            ) : (
+            ) : featuredProducts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 {featuredProducts.slice(0, 4).map((product: any) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
+              </div>
+            ) : (
+              <div className="py-20 text-center border-2 border-dashed border-stone-100 rounded-sm">
+                 <p className="text-stone-400 font-serif italic text-xl">Aucune pièce maîtresse n'est actuellement disponible.</p>
               </div>
             )}
           </div>
